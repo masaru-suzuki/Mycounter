@@ -42,7 +42,6 @@
         />
       )
     })
-    //偶然だけど、return itemsでできた
     return(
       <ul>
         {items}
@@ -68,7 +67,6 @@
     }
 
     countUp(target) {
-      //setStateは何かを返さないといけないの？
       this.setState(prevState => {
         const items = prevState.items.map(item => {
           return {id: item.id, count: item.count, color: item.color, price: item.price}
