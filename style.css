@@ -3,7 +3,7 @@ body {
   font-family: Verdana, sans-serif;
 }
 .container {
-  width: 330px;
+  width: 660px;
   margin: 20px auto;
 }
 .container ul {
@@ -16,12 +16,13 @@ body {
 .container li {
   width: 300px;
   height: 100px;
-  line-height: 100px;
-  text-align: center;
   cursor: pointer;
   user-select: none;
   border-radius: 10%;
   margin: 10px;
+}
+.container li p {
+  text-align: center;
 }
 .container div {
   text-align: center;

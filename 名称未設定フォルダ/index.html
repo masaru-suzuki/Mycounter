@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Practice2</title>
+  <title>React Practice</title>
   <link rel="stylesheet" href="style.css">
   <script src = "https://unpkg.com/react@16/umd/react.development.js"></script>
   <script src = "https://unpkg.com/react-dom@16/umd/react-dom.development.js"> </script>
@@ -13,17 +13,34 @@
 </head>
 <body>
   <div id="root"></div>
-  <!--JavaScriptの定義。”text/babel”はJavaScriptの拡張言語を記述するため。 -->
   <script type="text/babel">
     (() => {
+      // function Counter(props) {
+      //   function countUp(e, color) {
+      //     e.preventDefault;
+      //     alert(color);
+      //   }
+      //   return (<li style={{backgroundColor: props.color}}>0</li>
+      //   )
+      // }
+      //classの書き方
       function Counter(props) {
+        // constructor(props) {
+          //superは親クラスの引継ぎ <= 親クラスってどこ？
+          // super(props);
+          //this.stateで管理
+        // render(){
+        // return()のカッコの使い方
         return(
+          //countUp を括弧なしで呼ぶとメソッドの中では this が undefined になってしまう => constructor の方で this.countUp にこの class 自体を bind してあげれば良い this.countUp = this.countUp.bind(this);
+          //propsが差すものは？
+          //それがcounter = {counter={this.state.counters[0]}であれば、props.counter.でオブジェクトにアクセスする必要がある
           //{props.counter}だけはダメなのなんで？
           //{{backgroundColor: props.counter.color}}を{}で2回囲うのはなんで？
           //countUp という属性を親要素に付けることにしてあげて、 props の counter を渡す
           <li style={{backgroundColor: props.counter.color}} onClick={()=>
             props.countUp(props.counter)}>
-            {props.counter.id+' ['+props.counter.count+'個] '+props.counter.price+'円/個'}
+            {props.counter.id+':'+props.counter.count}
           </li>
         );
         // }
@@ -54,58 +71,55 @@
           super();
           this.state = {
             counters: [
-              {id: 'イチゴ', count: 0, color:'tomato',price: 150},
-              {id: 'りんご', count: 0, color:'skyblue',price: 100},
-              {id: 'メロン', count: 0, color:'limegreen',price: 1200},
-              {id: 'パイナップル', count: 0, color:'gray',price: 200},
-              {id: 'さくらんぼ', count: 0, color:'pink',price: 300},
-              {id: 'ぶどう', count: 0, color:'silver',price: 700},
-              ],
-            total: 0,
-            totalPrice: 0
+              {id: 'A', count: 0, color:'tomato'},
+              {id: 'B', count: 0, color:'skyblue'},
+              {id: 'C', count: 0, color:'limegreen'},
+              {id: 'D', count: 0, color:'gray'},
+              {id: 'E', count: 0, color:'pink'},
+              {id: 'F', count: 0, color:'silver'},
+            ],
+            total: 0
           }
+          //countUpがundefinedにならないようにbindする
           this.countUp = this.countUp.bind(this);
         };
         countUp(counter) {
+          //this.setState()の中でprevStateを用いてアロー関数を実行
           this.setState(prevState => {
             const counters = prevState.counters.map(counter => {
-              return {id: counter.id, count: counter.count, color: counter.color,price:counter.price};
+              return {id: counter.id, count: counter.count, color: counter.color};
               });
             const pos = counters.map(counter => {
               return counter.id;
             }).indexOf(counter.id);
-            console.log(counters.map(counter => {
-              return counter.id;
-            }))
             counters[pos].count++;
-            const targetPrice = counters[pos].price
-            const sumPrice = prevState.totalPrice + targetPrice
+            // return counters;たと、エラー
+            //setStateの中をreturnするときには元の形式に従う必要があるの？
               return {
                 counters: counters,
-                total: prevState.total + 1,
-                totalPrice: sumPrice
+                total: prevState.total + 1
                 }
           });
         }
         render() {
           return(
+            //CounterListにcountersを渡す  =>  propsとして取得できる
             <div className="container">
               <CounterList
                 counters={this.state.counters}
                 countUp = {this.countUp}
                 />
-              <div className="total">
-                <p>注文個数 {this.state.total}個</p>
-                <p>合計金額 {this.state.totalPrice}円</p>
-              </div>
+              <div>TOTAL INVENTORY {this.state.total}</div>
             </div>
           );
         }
       }
       ReactDOM.render(
+      //タグでかこう
         <App/>,
         document.getElementById('root')
       );
+      // ();をつけるんだ！
     })();
   </script>
 </body>
