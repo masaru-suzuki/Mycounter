@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Practice2</title>
+  <title>Practice</title>
   <link rel="stylesheet" href="style.css">
   <script src = "https://unpkg.com/react@16/umd/react.development.js"></script>
   <script src = "https://unpkg.com/react-dom@16/umd/react-dom.development.js"> </script>
@@ -13,100 +13,126 @@
 </head>
 <body>
   <div id="root"></div>
-  <!--JavaScriptの定義。”text/babel”はJavaScriptの拡張言語を記述するため。 -->
-  <script type="text/babel">
-    (() => {
-      function Counter(props) {
-        return(
-          //{props.counter}だけはダメなのなんで？
-          //{{backgroundColor: props.counter.color}}を{}で2回囲うのはなんで？
-          //countUp という属性を親要素に付けることにしてあげて、 props の counter を渡す
-          <li style={{backgroundColor: props.counter.color}} onClick={()=>
-            props.countUp(props.counter)}>
-            {props.counter.id+' ['+props.counter.count+'個] '+props.counter.price+'円/個'}
-          </li>
-        );
-        // }
-      }
+  <script type=text/babel>
+  function Panel(props) {
+    // console.log(props)
+    // result   {item: {…}, countUp: ƒ} これが６つ
 
-      function CounterList(props) {
-        //{counter}って{}で囲うのはなぜ？
-        //countUpの属性を追加して、さらに親要素にcounterを渡すためにcountUp属性をつける
-        const counters = props.counters.map(counter => {
-          return (
-            <Counter
-            counter={counter}
-            key={counter.id}
-            countUp={props.countUp}
-            />
-          );
-        });
+    //()をつけるとfunctionを実行
+    // console.log(props.countUp(props.item))
+    // result エラー=> 無限ループ
 
-        return (
-          <ul>
-          {counters}
-          </ul>
-        )
-      }
-
-      class App extends React.Component {
-        constructor() {
-          super();
-          this.state = {
-            counters: [
-              {id: 'イチゴ', count: 0, color:'tomato',price: 150},
-              {id: 'りんご', count: 0, color:'skyblue',price: 100},
-              {id: 'メロン', count: 0, color:'limegreen',price: 1200},
-              {id: 'パイナップル', count: 0, color:'gray',price: 200},
-              {id: 'さくらんぼ', count: 0, color:'pink',price: 300},
-              {id: 'ぶどう', count: 0, color:'silver',price: 700},
-              ],
-            total: 0,
-            totalPrice: 0
-          }
-          this.countUp = this.countUp.bind(this);
-        };
-        countUp(counter) {
-          this.setState(prevState => {
-            const counters = prevState.counters.map(counter => {
-              return {id: counter.id, count: counter.count, color: counter.color,price:counter.price};
-              });
-            const pos = counters.map(counter => {
-              return counter.id;
-            }).indexOf(counter.id);
-            console.log(counters.map(counter => {
-              return counter.id;
-            }))
-            counters[pos].count++;
-            const targetPrice = counters[pos].price
-            const sumPrice = prevState.totalPrice + targetPrice
-              return {
-                counters: counters,
-                total: prevState.total + 1,
-                totalPrice: sumPrice
-                }
-          });
+    // console.log(()=>{props.countUp(props.item)})
+    return(
+      <li style={{backgroundColor: props.item.color}}
+      // onClick={{props.countUp(props.item)}}>これだとなんでエラー？
+      /*props.countUp(props.item)は
+        return {
+          items: items,
+          totalCount: totalCount,
+          totalCost: totalCost,
         }
-        render() {
-          return(
-            <div className="container">
-              <CounterList
-                counters={this.state.counters}
-                countUp = {this.countUp}
-                />
-              <div className="total">
-                <p>注文個数 {this.state.total}個</p>
-                <p>合計金額 {this.state.totalPrice}円</p>
-              </div>
-            </div>
-          );
-        }
+        しており、その結果をonClickに代入しているから、動かない
+        */
+      onClick={()=>{props.countUp(props.item)}}>
+      <p>{props.item.id + ':' + props.item.count}</p>
+      <p>{props.item.price + '円/個'}</p>
+      </li>
+    )
+  }
+  function Board(props) {
+    // const x = console.log('a');
+    // const y = () => console.log('a')
+    // console.log(x);
+    // console.log(y);
+    // console.log(props)
+    //result  {items: Array(6), countUp: ƒ}
+    const items = props.items.map(item => {
+      return(
+        <Panel
+        item = {item}
+        key = {item.id}
+
+        countUp = {props.countUp}
+        />
+      )
+    })
+    return(
+      <ul>
+        {items}
+      </ul>
+    )
+  }
+  class App extends React.Component {
+    constructor() {
+      super();
+      this.state = {
+        items: [
+        {id: 'イチゴ', count: 0, color:'tomato',price: 150},
+        {id: 'りんご', count: 0, color:'skyblue',price: 100},
+        {id: 'メロン', count: 0, color:'limegreen',price: 1200},
+        {id: 'パイナップル', count: 0, color:'gray',price: 200},
+        {id: 'さくらんぼ', count: 0, color:'pink',price: 300},
+        {id: 'ぶどう', count: 0, color:'silver',price: 700},
+        ],
+        totalCount: 0,
+        totalCost: 0,
       }
-      ReactDOM.render(
+      this.countUp = this.countUp.bind(this);
+    }
+
+    countUp(target) {
+      this.setState(prevState => {
+        const items = prevState.items.map(item => {
+          return {id: item.id, count: item.count, color: item.color, price: item.price}
+        })
+        const position = items.map(item => {
+          return item.id
+        }).indexOf(target.id)
+
+        items[position].count++
+        const totalCost = prevState.totalCost + items[position].price
+          //なんで++だとダメなの？
+          /*const a = b++
+            const a = ++との違い
+            totalCountにprevState.totalCountを代入してから、++にしている
+            その結果、totalCountはprevState.totalCountでreturnしてしまい、
+            反映されない
+
+            reactはfunctionalプログラミング
+
+            プリビアスタイプ
+           */
+        const totalCount = prevState.totalCount + 1
+        return {
+          items: items,
+          totalCount: totalCount,
+          totalCost: totalCost,
+        }
+      })
+    }
+    //このrender() って何？
+    render() {
+      return(
+      <div className="container">
+        <Board
+        //なんで{}で囲むの？
+        items = {this.state.items}
+        countUp = {this.countUp}
+        />
+        <div className="total">
+          <p>合計個数{this.state.totalCount}</p>
+          <p>合計金額{this.state.totalCost}</p>
+        </div>
+      </div>
+      )
+    }
+  }
+
+  ReactDOM.render(
         <App/>,
         document.getElementById('root')
-      );
-    })();
+  )
   </script>
 </body>
 </html>
